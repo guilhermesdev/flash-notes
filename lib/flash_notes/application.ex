@@ -7,8 +7,9 @@ defmodule FlashNotes.Application do
 
   @impl true
   def start(_type, _args) do
+    FlashNotes.NoteStorage.init()
+
     children = [
-      FlashNotes.NoteStorage,
       # Start the Telemetry supervisor
       FlashNotesWeb.Telemetry,
       # Start the PubSub system

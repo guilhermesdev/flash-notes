@@ -1,58 +1,38 @@
 defmodule FlashNotes.NoteStorage do
-  use GenServer
+  @table_name :notes
 
-  @impl GenServer
-  def init(state \\ nil) do
-    :dets.open_file(:notes, type: :set)
-    {:ok, state}
+  def init, do: :dets.open_file(@table_name, type: :set)
+
+  @spec get(String.t()) :: any
+  def get(key) do
+    :dets.lookup(@table_name, key) |> handle_note_data
   end
 
-  def start_link(opts \\ []), do: GenServer.start_link(__MODULE__, opts, name: __MODULE__)
+  @spec handle_note_data([]) :: {:empty, nil}
+  defp handle_note_data([]), do: {:empty, nil}
 
-  @impl GenServer
-  @spec handle_call(
-          {:put, {String.t(), any, integer()}},
-          {pid, term},
-          any
-        ) :: {:reply, any, nil}
-  def handle_cast({:put, {key, value, ttl}}, _) do
-    expiration_time = ttl + :os.system_time(:millisecond)
-
-    :dets.insert(:notes, {key, value, expiration_time})
-
-    {:noreply, nil}
-  end
-
-  @impl GenServer
-  @spec handle_call(
-          {:get, String.t()},
-          {pid(), term()},
-          any()
-        ) :: {:reply, any(), nil}
-  def handle_call({:get, key}, _from, _) do
-    :dets.lookup(:notes, key) |> handle_note_data
-  end
-
-  @spec handle_note_data({String.t(), any, integer()}) :: any
+  @spec handle_note_data({String.t(), any, integer()}) :: {:empty, nil} | {:ok, any}
   defp handle_note_data([{key, result, expire_at}]) do
     is_expired? = expire_at < :os.system_time(:millisecond)
 
     case is_expired? do
       true ->
-        :dets.delete(:notes, key)
-        {:reply, nil, nil}
+        :dets.delete(@table_name, key)
+        {:empty, nil}
 
       false ->
-        {:reply, result, nil}
+        {:ok, result}
     end
   end
 
-  @spec handle_note_data([]) :: any
-  defp handle_note_data([]), do: {:reply, nil, nil}
+  def get_all_entries do
+    :dets.foldl(fn item, acc -> [item | acc] end, [], @table_name)
+  end
 
   @spec put(String.t(), any, integer()) :: :ok
-  def put(key, value, ttl), do: GenServer.cast(__MODULE__, {:put, {key, value, ttl}})
+  def put(key, value, ttl) do
+    expiration_time = ttl + :os.system_time(:millisecond)
 
-  @spec get(String.t()) :: any
-  def get(key), do: GenServer.call(__MODULE__, {:get, key})
+    :dets.insert(@table_name, {key, value, expiration_time})
+  end
 end
