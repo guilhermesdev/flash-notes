@@ -1,4 +1,5 @@
-defmodule FlashNotes.NoteStorage do
+defmodule FlashNotes.Services.NoteStorage do
+  alias FlashNotes.Entities.Note
   @table_name :notes
 
   def init, do: :dets.open_file(@table_name, type: :set)
@@ -12,10 +13,8 @@ defmodule FlashNotes.NoteStorage do
   defp handle_note_data([]), do: {:empty, nil}
 
   @spec handle_note_data({String.t(), any, integer()}) :: {:empty, nil} | {:ok, any}
-  defp handle_note_data([{key, result, expire_at}]) do
-    is_expired? = expire_at < :os.system_time(:millisecond)
-
-    case is_expired? do
+  defp handle_note_data([{key, result, _expire_at} = note]) do
+    case Note.is_expired?(note) do
       true ->
         :dets.delete(@table_name, key)
         {:empty, nil}
@@ -35,4 +34,7 @@ defmodule FlashNotes.NoteStorage do
 
     :dets.insert(@table_name, {key, value, expiration_time})
   end
+
+  @spec delete(String.t()) :: :ok
+  def delete(key), do: :dets.delete(@table_name, key)
 end
