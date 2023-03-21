@@ -17,19 +17,15 @@ defmodule FlashNotes.Services.NotesCleaner do
     GenServer.start_link(__MODULE__, state, name: __MODULE__)
   end
 
-  defp delete_expired_notes do
+  @impl GenServer
+  def handle_info(:delete_expired_notes, _state) do
     NoteStorage.get_all_entries()
-    |> Enum.each(fn {key, _value, _expire_at} = note ->
+    |> Enum.each(fn {key, note} ->
       case Note.is_expired?(note) do
         true -> NoteStorage.delete(key)
         false -> :ok
       end
     end)
-  end
-
-  @impl GenServer
-  def handle_info(:delete_expired_notes, _state) do
-    delete_expired_notes()
 
     Process.send_after(self(), :delete_expired_notes, @five_minutes)
 
