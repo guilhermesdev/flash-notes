@@ -4,12 +4,12 @@ defmodule FlashNotes.Services.NoteStorage do
 
   def init, do: :dets.open_file(@table_name, type: :set)
 
-  @spec get(String.t()) :: {:empty, nil} | {:ok, any}
+  @spec get(String.t()) :: {:empty, nil} | {:ok, String.t()}
   def get(key) do
     :dets.lookup(@table_name, key) |> handle_note_data
   end
 
-  @spec handle_note_data([{String.t(), Note.t()}]) :: {:empty, nil} | {:ok, any}
+  @spec handle_note_data([{String.t(), Note.t()}]) :: {:empty, nil} | {:ok, String.t()}
   defp handle_note_data([]), do: {:empty, nil}
 
   defp handle_note_data([{key, note}]) do
@@ -28,7 +28,7 @@ defmodule FlashNotes.Services.NoteStorage do
     :dets.foldl(fn item, acc -> [item | acc] end, [], @table_name)
   end
 
-  @spec put(String.t(), any, integer()) :: :ok
+  @spec put(String.t(), String.t(), integer()) :: :ok
   def put(key, value, ttl) do
     expiration_time = ttl + :os.system_time(:millisecond)
 
