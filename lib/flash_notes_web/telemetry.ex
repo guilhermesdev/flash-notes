@@ -1,5 +1,10 @@
 defmodule FlashNotesWeb.Telemetry do
+  @moduledoc """
+  Phoenix builtin Telemetry module
+  """
+
   use Supervisor
+
   import Telemetry.Metrics
 
   def start_link(arg) do

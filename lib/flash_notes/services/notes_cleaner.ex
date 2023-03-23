@@ -1,4 +1,8 @@
 defmodule FlashNotes.Services.NotesCleaner do
+  @moduledoc """
+  This module schedule a task to delete outdated notes periodically
+  """
+
   alias FlashNotes.Entities.Note
   alias FlashNotes.Services.NoteStorage
 

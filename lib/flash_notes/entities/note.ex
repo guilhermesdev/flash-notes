@@ -1,4 +1,8 @@
 defmodule FlashNotes.Entities.Note do
+  @moduledoc """
+  This module is responsible for handle note related operations
+  """
+
   @enforce_keys [:value, :expire_at]
   defstruct [:value, :expire_at]
 

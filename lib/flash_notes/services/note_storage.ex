@@ -1,4 +1,9 @@
 defmodule FlashNotes.Services.NoteStorage do
+  @moduledoc """
+  This module wraps all the logic related to store the notes on a :dets table
+  in a easy way to consume and manage the data
+  """
+
   alias FlashNotes.Entities.Note
   @table_name :notes
 
