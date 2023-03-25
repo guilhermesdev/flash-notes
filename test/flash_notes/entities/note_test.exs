@@ -5,7 +5,7 @@ defmodule FlashNotes.Entities.NoteTest do
 
   alias FlashNotes.Entities.Note
 
-  describe "Note.is_expired?" do
+  describe "Note.is_expired?/1" do
     @describetag :note_is_expired
 
     test "should return true if given note has a past date in expire_at" do

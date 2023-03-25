@@ -42,4 +42,6 @@ defmodule FlashNotes.Services.NoteStorage do
 
   @spec delete(String.t()) :: :ok
   def delete(key), do: :dets.delete(@table_name, key)
+
+  def delete_all_entries, do: :dets.delete_all_objects(@table_name)
 end
