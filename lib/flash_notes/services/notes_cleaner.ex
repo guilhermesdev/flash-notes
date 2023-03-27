@@ -4,34 +4,41 @@ defmodule FlashNotes.Services.NotesCleaner do
   """
 
   alias FlashNotes.Entities.Note
-  alias FlashNotes.Services.NoteStorage
+  alias FlashNotes.Services.NotesStorage
+
+  require Logger
 
   use GenServer
 
-  @five_minutes 1000 * 60 * 5
+  @interval :timer.minutes(5)
 
-  @impl GenServer
-  def init(opts \\ []) do
-    Process.send(self(), :delete_expired_notes, [])
-
-    {:ok, opts}
-  end
-
-  def start_link(state \\ []) do
-    GenServer.start_link(__MODULE__, state, name: __MODULE__)
+  def start_link(opts \\ []) do
+    Logger.info("Starting notes cleaner worker...")
+    GenServer.start_link(__MODULE__, opts, name: __MODULE__)
   end
 
   @impl GenServer
-  def handle_info(:delete_expired_notes, _state) do
-    NoteStorage.get_all_entries()
+  def init(opts) do
+    Process.send(self(), {:delete_expired_notes, opts[:table_name]}, [])
+
+    {:ok, nil}
+  end
+
+  @impl GenServer
+  def handle_info({:delete_expired_notes, table_name}, _state) do
+    Logger.info("Cleaning expired notes...")
+
+    NotesStorage.get_all_entries(table_name)
     |> Enum.each(fn {key, note} ->
       case Note.is_expired?(note) do
-        true -> NoteStorage.delete(key)
+        true -> NotesStorage.delete(key, table_name)
         false -> :ok
       end
     end)
 
-    Process.send_after(self(), :delete_expired_notes, @five_minutes)
+    Logger.info("Expired notes cleaned successfully!")
+
+    Process.send_after(self(), {:delete_expired_notes, table_name}, @interval)
 
     {:noreply, nil}
   end

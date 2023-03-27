@@ -36,5 +36,6 @@ npm-debug.log
 /config/*.secret.exs
 .elixir_ls/
 
-# :dets notes table file
+# :dets files
 notes
+test_notes_table

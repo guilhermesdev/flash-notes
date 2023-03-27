@@ -7,10 +7,11 @@ defmodule FlashNotes.Application do
 
   @impl true
   def start(_type, _args) do
-    FlashNotes.Services.NoteStorage.init()
+    notes_table_name = :notes
 
     children = [
-      FlashNotes.Services.NotesCleaner,
+      {FlashNotes.Services.NotesStorage, table_name: notes_table_name},
+      {FlashNotes.Services.NotesCleaner, table_name: notes_table_name},
       # Start the Telemetry supervisor
       FlashNotesWeb.Telemetry,
       # Start the PubSub system
