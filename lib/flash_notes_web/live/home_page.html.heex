@@ -1,0 +1,71 @@
+<main class="w-full h-screen grid place-items-center">
+  <div class="flex flex-col items-center">
+    <div class={
+      "#{if @note_url, do: "", else: "opacity-0 transform scale-90"} alert alert-success w-full shadow-lg mt-6 mx-auto transition duration-300"
+    }>
+      <div>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="stroke-current flex-shrink-0 h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+        </svg>
+        <div>Nota criada com sucesso: <span><%= @note_url %></span></div>
+      </div>
+    </div>
+    <form
+      phx-submit="submit"
+      class="card w-96 flex flex-col gap-5 bg-base-200 p-4 shadow-2xl rounded-lg"
+    >
+      <div class="flex flex-col gap-2.5">
+        <h2 class="text-lg font-semibold">
+          Crie sua nota
+        </h2>
+        <textarea
+          name="text"
+          class="textarea outline-none focus:ring-2 focus:ring-secondary transition-shadow h-32 resize-none"
+          placeholder="Digite seu texto aqui..."
+        />
+
+        <div>
+          <label class="label justify-normal gap-4 cursor-pointer">
+            <input
+              type="radio"
+              name="ttl"
+              value={:timer.minutes(1)}
+              class="radio radio-secondary"
+              checked
+            />
+            <span class="label-text">1 minuto</span>
+          </label>
+          <label class="label justify-normal gap-4 cursor-pointer">
+            <input
+              type="radio"
+              name="ttl"
+              value={:timer.minutes(5)}
+              class="radio radio-secondary"
+            />
+            <span class="label-text">5 minutos</span>
+          </label>
+          <label class="label justify-normal gap-4 cursor-pointer">
+            <input
+              type="radio"
+              name="ttl"
+              value={:timer.minutes(10)}
+              class="radio radio-secondary"
+            />
+            <span class="label-text">10 minutos</span>
+          </label>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-success">Criar nota</button>
+    </form>
+  </div>
+</main>

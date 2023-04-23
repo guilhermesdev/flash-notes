@@ -17,7 +17,8 @@ defmodule FlashNotesWeb.Router do
   scope "/", FlashNotesWeb do
     pipe_through :browser
 
-    get "/", PageController, :index
+    live "/", LiveView.HomePage
+    live ":note_id", LiveView.NotePage
   end
 
   # Other scopes may use custom stacks.
