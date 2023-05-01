@@ -1,4 +1,8 @@
 defmodule FlashNotesWeb.LiveView.HomePage do
+  @moduledoc """
+  The home page live view
+  """
+
   use FlashNotesWeb, :live_view
 
   alias FlashNotes.Services.NotesStorage
@@ -15,7 +19,13 @@ defmodule FlashNotesWeb.LiveView.HomePage do
 
     NotesStorage.put(note_id, text, ttl)
 
-    note_url = "#{FlashNotesWeb.Endpoint.url()}/#{note_id}"
+    base_url =
+      case FlashNotesWeb.Endpoint.host() do
+        "localhost" -> FlashNotesWeb.Endpoint.url()
+        _ -> FlashNotesWeb.Endpoint.host()
+      end
+
+    note_url = "#{base_url}/#{note_id}"
 
     {:noreply, assign(socket, :note_url, note_url)}
   end
