@@ -5,7 +5,7 @@ defmodule FlashNotesWeb.LiveView.HomePage do
 
   use FlashNotesWeb, :live_view
 
-  alias FlashNotes.Services.NotesStorage
+  alias FlashNotes.Repositories.NotesRepository
 
   def mount(_params, _session, socket) do
     {:ok, assign(socket, :note_url, nil)}
@@ -17,7 +17,7 @@ defmodule FlashNotesWeb.LiveView.HomePage do
 
     note_id = Nanoid.generate(8)
 
-    NotesStorage.put(note_id, text, ttl)
+    NotesRepository.put(note_id, text, ttl)
 
     base_url =
       case FlashNotesWeb.Endpoint.host() do

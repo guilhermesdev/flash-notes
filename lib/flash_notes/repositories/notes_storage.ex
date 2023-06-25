@@ -1,4 +1,4 @@
-defmodule FlashNotes.Services.NotesStorage do
+defmodule FlashNotes.Repositories.NotesRepository do
   @moduledoc """
   This module wraps all the logic related to store the notes on a :dets table
   in a easy way to consume and manage the data

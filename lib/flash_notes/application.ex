@@ -10,8 +10,8 @@ defmodule FlashNotes.Application do
     notes_table_name = :notes
 
     children = [
-      {FlashNotes.Services.NotesStorage, table_name: notes_table_name},
-      {FlashNotes.Services.NotesCleaner, table_name: notes_table_name},
+      {FlashNotes.Repositories.NotesRepository, table_name: notes_table_name},
+      {FlashNotes.Workers.NotesCleaner, table_name: notes_table_name},
       # Start the Telemetry supervisor
       FlashNotesWeb.Telemetry,
       # Start the PubSub system

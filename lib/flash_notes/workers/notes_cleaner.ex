@@ -1,10 +1,10 @@
-defmodule FlashNotes.Services.NotesCleaner do
+defmodule FlashNotes.Workers.NotesCleaner do
   @moduledoc """
   This module schedule a task to delete outdated notes periodically
   """
 
   alias FlashNotes.Entities.Note
-  alias FlashNotes.Services.NotesStorage
+  alias FlashNotes.Repositories.NotesRepository
 
   require Logger
 
@@ -28,10 +28,10 @@ defmodule FlashNotes.Services.NotesCleaner do
   def handle_info({:delete_expired_notes, table_name}, _state) do
     Logger.info("Cleaning expired notes...")
 
-    NotesStorage.get_all_entries(table_name)
+    NotesRepository.get_all_entries(table_name)
     |> Enum.each(fn {key, note} ->
       case Note.is_expired?(note) do
-        true -> NotesStorage.delete(key, table_name)
+        true -> NotesRepository.delete(key, table_name)
         false -> :ok
       end
     end)
